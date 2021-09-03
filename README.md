@@ -16,7 +16,18 @@ Hence this repository.
 1. This package needs the `requests` and `python-dotenv` packages.
 2. Add this repository as a submodule of your project.
 3. Import it using `from discord_webhook_handler import DiscordWebhookHandler`.
-4. Add standard `logging` commands.
+4. Add standard `logging` commands. For example,
+
+	```python
+	import logging
+	from dwhandler import DiscordWebhookHandler
+
+	logger = logging.getLogger('root')
+	logger.setLevel(logging.INFO)
+	logger.addHandler(DiscordWebhookHandler())
+	logger.addHandler(logging.StreamHandler())
+	```
+
 5. You should set environment variable `WEBHOOK_URL` to the target webhook URL.
 6. If you want different channels for different error levels,
 	use `WEBHOOK_CRITICAL_URL`, `WEBHOOK_ERROR_URL`, etc.
