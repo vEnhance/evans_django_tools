@@ -17,6 +17,12 @@ Hence this repository.
 2. Add this repository as a submodule of your project.
 3. Import it using `from discord_webhook_handler import DiscordWebhookHandler`.
 4. Add standard `logging` commands.
+5. You should set environment variable `WEBHOOK_URL` to the target webhook URL.
+6. If you want different channels for different error levels,
+	use `WEBHOOK_CRITICAL_URL`, `WEBHOOK_ERROR_URL`, etc.
+	Otherwise `WEBHOOK_URL` is used by default.
+7. The package adds three new log levels: `VERBOSE_LOG_LEVEL = 15`,
+	`SUCCESS_LOG_LEVEL = 25`, `ACTION_LOG_LEVEL = 35`.
 
 ## PyPi
 
