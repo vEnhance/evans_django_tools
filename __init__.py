@@ -43,6 +43,7 @@ EMOJIS = {
 
 class DiscordWebhookHandler(logging.Handler):
 	def emit(self, record: logging.LogRecord):
+		self.format(record)
 		level = record.levelname.lower().strip()
 		emoji = EMOJIS.get(level, ':question:')
 		color = COLORS.get(level, 0xaaaaaa)
