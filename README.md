@@ -1,4 +1,4 @@
-# discord_webhook_handler
+# dwhandler
 
 This is a wrapper script that implements a handler
 for logging commands to send Discord webhooks.
