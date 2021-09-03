@@ -15,7 +15,7 @@ Hence this repository.
 
 1. This package needs the `requests` and `python-dotenv` packages.
 2. Add this repository as a submodule of your project.
-3. Import it using `from discord_webhook_handler import DiscordWebhookHandler`.
+3. Import it using `from dwhandler import DiscordWebhookHandler`.
 4. Add standard `logging` commands. For example,
 
 	```python
