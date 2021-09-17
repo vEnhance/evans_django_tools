@@ -2,7 +2,7 @@ import logging
 import sys
 import unittest
 
-from handler import DiscordWebhookHandler, truncate
+from .handler import DiscordWebhookHandler, truncate
 
 
 class TestLogger(unittest.TestCase):
