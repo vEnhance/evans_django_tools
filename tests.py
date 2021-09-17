@@ -1,4 +1,5 @@
 import logging
+import os
 import sys
 import unittest
 
@@ -18,8 +19,10 @@ class TestLogger(unittest.TestCase):
 			payload = handler.get_payload(record)
 			self.assertLessEqual(len(payload['embeds'][0]['description']), 2000)
 			resp = handler.get_response(record)
-		assert resp is not None
-		self.assertLessEqual(resp.status_code, 299)
+		if os.getenv('WEBHOOK_URL') is not None:
+			resp = handler.get_response(record)
+			assert resp is not None
+			self.assertLessEqual(resp.status_code, 299)
 
 	def test_truncate(self):
 		self.assertLess(len(truncate('aoeu' * 1000, 800)), 820)
@@ -35,6 +38,7 @@ class TestLogger(unittest.TestCase):
 			record = factory(__name__, logging.WARNING, 'test_logger', 99, msg, args, sys.exc_info())
 			payload = handler.get_payload(record)
 			self.assertLessEqual(len(payload['embeds'][0]['description']), 2000)
-			resp = handler.get_response(record)
-			assert resp is not None
-			self.assertLessEqual(resp.status_code, 299)
+			if os.getenv('WEBHOOK_URL') is not None:
+				resp = handler.get_response(record)
+				assert resp is not None
+				self.assertLessEqual(resp.status_code, 299)
