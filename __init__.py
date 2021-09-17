@@ -41,6 +41,12 @@ EMOJIS = {
 }
 
 
+def truncate(s: str, n: int = 800) -> str:
+	if len(s) > n:
+		return s[:n // 2] + '\n...\n' + s[-n // 2:]
+	return s
+
+
 class DiscordWebhookHandler(logging.Handler):
 	def emit(self, record: logging.LogRecord):
 		self.format(record)
@@ -107,12 +113,8 @@ class DiscordWebhookHandler(logging.Handler):
 		# if exc_text nonempty, add that to description
 		if record.exc_text is not None:
 			# always truncate r.exc_text to at most 600 chars since it's fking long
-			if len(record.exc_text) > 600:
-				blob = record.exc_text[:300] + '\n...\n' + record.exc_text[-300:]
-			else:
-				blob = record.exc_text
 			msg_key = ':yellow_heart: EXCEPTION :yellow_heart:'
-			description_parts[msg_key] = "```" + blob + "```"
+			description_parts[msg_key] = truncate(record.exc_text)
 
 		# if request data is there, include that too
 		if hasattr(record, 'request'):
@@ -141,15 +143,15 @@ class DiscordWebhookHandler(logging.Handler):
 				s += 'Files included\n'
 				for name, fileobj in request.FILES.items():
 					s += f'> `{name}` ({fileobj.size} bytes, { fileobj.content_type })\n'
-			description_parts[':blue_heart: REQUEST :blue_heart:'] = s
+
+			chars_remaining = 1900 - sum(len(v) for v in description_parts.values())
+			description_parts[':blue_heart: REQUEST :blue_heart:'] = s[:chars_remaining]
 
 		embed = {'title': title, 'color': color, 'fields': fields}
 
 		desc = ''
-		no_worries = sum(len(_) for _ in description_parts.values()) <= 1800
 		for k, v in description_parts.items():
-			if len(v) < 600 or no_worries:
-				desc += k + '\n' + v.strip() + '\n'
+			desc += k + '\n' + v.strip() + '\n'
 		if desc:
 			embed['description'] = desc
 
