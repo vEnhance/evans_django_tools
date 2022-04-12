@@ -174,6 +174,8 @@ class DiscordWebhookHandler(logging.Handler):
 		url = self.get_url(record)
 		if url is not None:
 			return requests.post(url, json=data)
+		else:
+			return None
 
 	def emit(self, record: logging.LogRecord):
 		print(self.get_response(record))
