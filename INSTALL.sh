@@ -8,6 +8,3 @@ cd "$DIR"
 cd ../
 ln -s evans_django_tools/bypass-lint.sh .
 ln -s evans_django_tools/lint.sh .
-mkdir -p .github/workflows
-ln -s ../../evans_django_tools/workflows/main.yml .github/workflows/main.yml
-ln -s ../../evans_django_tools/workflows/pyright_to_rdjson.py .github/workflows/pyright_to_rdjson.py
