@@ -69,7 +69,7 @@ jobs:
         echo '::endgroup::'
 
         echo '::group::🔎 Running pyright with reviewdog 🐶 ...'
-        curl -fL https://raw.githubusercontent.com/jordemort/action-pyright/a72509b263749732e50c41d335964a100ec9c06a/pyright_to_rdjson/pyright_to_rdjson.py
+        curl -fL https://raw.githubusercontent.com/jordemort/action-pyright/a72509b263749732e50c41d335964a100ec9c06a/pyright_to_rdjson/pyright_to_rdjson.py --output pyright_to_rdjson.py
         "$(npm bin)/pyright" $(git ls-files '*.py' | grep -v migrations ) --outputjson |
           python3 pyright_to_rdjson.py  |
           reviewdog -f=rdjson -name="pyright-report" \
