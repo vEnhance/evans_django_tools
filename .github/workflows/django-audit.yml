@@ -61,7 +61,7 @@ jobs:
         PATH="${TEMP_PATH}:$PATH"
 
         echo '::group::🐶 Installing reviewdog ... https://github.com/reviewdog/reviewdog'
-        curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b "${TEMP_PATH}" "${REVIEWDOG_VERSION}" 2>&1
+        curl -fL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b "${TEMP_PATH}" "${REVIEWDOG_VERSION}" 2>&1
         echo '::endgroup::'
 
         echo '::group::🐍 Installing pyright ...'
@@ -69,8 +69,9 @@ jobs:
         echo '::endgroup::'
 
         echo '::group::🔎 Running pyright with reviewdog 🐶 ...'
+        curl -fL https://raw.githubusercontent.com/jordemort/action-pyright/a72509b263749732e50c41d335964a100ec9c06a/pyright_to_rdjson/pyright_to_rdjson.py
         "$(npm bin)/pyright" $(git ls-files '*.py' | grep -v migrations ) --outputjson |
-          python3 .github/workflows/pyright_to_rdjson.py  |
+          python3 pyright_to_rdjson.py  |
           reviewdog -f=rdjson -name="pyright-report" \
             -reporter="github-check" \
             -fail-on-error="true"
