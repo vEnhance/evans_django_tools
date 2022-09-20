@@ -45,6 +45,35 @@ provide some `request` information in the webhook embed.
 The file `evans_django_tools/testsuite.py` has a bunch of homemade helper
 functions for writing Django tests.
 
-## Bash scripts and workflows
+## Bash scripts for local checks
 
-Run `./INSTALL.sh` to create a bunch of symlinks.
+Running `./INSTALL.sh` will create symlinks to two scripts, `lint.sh` and
+`bypass-lint.sh`.
+
+To use the `lint.sh` automatically on `git push`,
+create an executable file `.git/hoks/pre-push` with content `./lint.sh`.
+This will run the `lint.sh` script automatically before pushing anything
+(and abort the push if any issues are detected).
+
+Running `./bypass-lint.sh` causes `lint.sh` to do nothing for the current
+commit, hence the name.
+
+## GitHub workflow
+
+This repository has a Github reusable workflow that you can use that runs
+essentially the same checks as `lint.sh`. To use it, create
+`.github/workflows/django-audit.yml` in your main repository and include
+something like the following:
+
+```yaml
+name: Django Audit
+
+on:
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ '*' ]
+jobs:
+  audit:
+    uses: vEnhance/evans_django_tools/.github/workflows/django-audit.yml@main
+```
