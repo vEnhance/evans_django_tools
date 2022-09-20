@@ -39,3 +39,12 @@ provide some `request` information in the webhook embed.
 	Otherwise `WEBHOOK_URL` is used by default.
 7. The package adds three new log levels: `VERBOSE_LOG_LEVEL = 15`,
 	`SUCCESS_LOG_LEVEL = 25`, `ACTION_LOG_LEVEL = 35`.
+
+## Test suite
+
+The file `evans_django_tools/testsuite.py` has a bunch of homemade helper
+functions for writing Django tests.
+
+## Bash scripts and workflows
+
+Run `./INSTALL.sh` to create a bunch of symlinks.
