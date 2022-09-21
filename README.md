@@ -47,16 +47,14 @@ functions for writing Django tests.
 
 ## Bash scripts for local checks
 
-Running `./INSTALL.sh` will create symlinks to two scripts, `lint.sh` and
-`bypass-lint.sh`.
+To use the `lint.sh` automatically on `git push`, create an executable file
+`.git/hooks/pre-push` with content `./evans_django_tools/lint.sh`.
+This will run the `lint.sh` script automatically before pushing anything (and
+abort the push if any issues are detected).
 
-To use the `lint.sh` automatically on `git push`,
-create an executable file `.git/hoks/pre-push` with content `./lint.sh`.
-This will run the `lint.sh` script automatically before pushing anything
-(and abort the push if any issues are detected).
-
-Running `./bypass-lint.sh` causes `lint.sh` to do nothing for the current
-commit, hence the name.
+Running `./evans_django_tools/bypass-lint.sh` causes
+`./evans_django_tools/lint.sh` to do nothing for the current commit, hence the
+name.
 
 ## GitHub workflow
 
