@@ -44,7 +44,7 @@ class EvanTestCase(TestCase):
 		return '\n' + pprint.pformat(d, compact=False, depth=3) + '\n'
 
 	def debug_dump(self, response: MonkeyResponseType) -> None:
-		timestamp = datetime.utcnow().strftime('%d_%b_%Y_%H%M%S')
+		timestamp = datetime.now().strftime('%d_%b_%Y_%H%M%S')
 		html_path = Path(f"/tmp/{settings.WSGI_APPLICATION}.tests/{timestamp}.html")
 		txt_path = Path(f"/tmp/{settings.WSGI_APPLICATION}.tests/{timestamp}.txt")
 
