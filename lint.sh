@@ -29,6 +29,12 @@ if [ -f $BAD_FILE ]; then
 	fi
 fi
 
+echo -e "-----------------------------------------------------------------------"
+echo -e "\033[1;35mTesting $(echo $COMMIT_ID)\033[0m"
+echo -e "\033[1;35mWill typecheck the following $(echo $TO_CHECK | wc --words) files...\033[0m"
+echo $TO_CHECK
+echo -e "-----------------------------------------------------------------------"
+
 if [ "$1" == "--force" ]; then
 	echo -e "\033[1;31m]$COMMIT_ID\033[0m not being compared to upstream"
 	echo -e "---------------------------"
