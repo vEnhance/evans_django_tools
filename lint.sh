@@ -30,8 +30,8 @@ if [ -f $BAD_FILE ]; then
 fi
 
 echo -e "-----------------------------------------------------------------------"
-echo -e "\033[1;35mTesting $(echo $COMMIT_ID)\033[0m"
-echo -e "\033[1;35mWill typecheck the following $(echo $TO_CHECK | wc --words) files...\033[0m"
+echo -e "\033[1;36mTesting $(echo $COMMIT_ID)\033[0m"
+echo -e "\033[1;34mWill typecheck the following $(echo $TO_CHECK | wc --words) files...\033[0m"
 echo $TO_CHECK
 echo -e "-----------------------------------------------------------------------"
 
