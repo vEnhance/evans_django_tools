@@ -51,6 +51,15 @@ else
 	echo -e ""
 fi
 
+echo -e "\033[1;35mRunning spell-check ...\033[0m"
+echo -e "---------------------------"
+if ! codespell $(git ls-files); then
+	echo -e "$FAILED_HEADER Spell-check failed"
+	echo $COMMIT_ID > $BAD_FILE
+	exit 1
+fi
+echo -e ""
+
 echo -e "\033[1;35mRunning manage.py check ...\033[0m"
 echo -e "---------------------------"
 if ! python manage.py check; then
