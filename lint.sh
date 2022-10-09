@@ -10,6 +10,7 @@ GOOD_FILE="/tmp/${PWD##*/}.good"
 
 COMMIT_ID=$(git rev-parse HEAD)
 readarray -t PY_FILES_ARRAY < <(git ls-files '*.py' | grep -v migrations/ | grep -v /apps.py)
+readarray -t SPELL_FILES_ARRAY < <(git ls-files)
 
 if [ -f "$GOOD_FILE" ]; then
 	if [ "$COMMIT_ID" == "$(cat "$GOOD_FILE")" ]; then
@@ -30,9 +31,9 @@ if [ -f "$BAD_FILE" ]; then
 fi
 
 echo -e "-----------------------------------------------------------------------"
-echo -e "\033[1;36mTesting $(echo $COMMIT_ID)\033[0m"
-echo -e "\033[1;34mWill typecheck the following $(echo $TO_CHECK | wc --words) files...\033[0m"
-echo $TO_CHECK
+echo -e "\033[1;36mTesting $COMMIT_ID\033[0m"
+echo -e "\033[1;34mWill typecheck the following $(echo "$TO_CHECK" | wc --words) files...\033[0m"
+echo "$TO_CHECK"
 echo -e "-----------------------------------------------------------------------"
 
 if [ "$1" == "--force" ]; then
@@ -55,16 +56,16 @@ echo -e "\033[1;35mRunning poetry install --sync ...\033[0m"
 echo -e "---------------------------"
 if ! poetry install --sync; then
 	echo -e "$FAILED_HEADER Dependency update failed"
-	echo $COMMIT_ID > $BAD_FILE
+	echo "$COMMIT_ID" >"$BAD_FILE"
 	exit 1
 fi
 echo -e ""
 
 echo -e "\033[1;35mRunning spell-check ...\033[0m"
 echo -e "---------------------------"
-if ! codespell $(git ls-files); then
+if ! codespell "${SPELL_FILES_ARRAY[@]}"; then
 	echo -e "$FAILED_HEADER Spell-check failed"
-	echo $COMMIT_ID > $BAD_FILE
+	echo "$COMMIT_ID" >"$BAD_FILE"
 	exit 1
 fi
 echo -e ""
