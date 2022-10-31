@@ -32,8 +32,8 @@ fi
 
 echo -e "-----------------------------------------------------------------------"
 echo -e "\033[1;36mTesting $COMMIT_ID\033[0m"
-echo -e "\033[1;34mWill typecheck the following $(echo "$TO_CHECK" | wc --words) files...\033[0m"
-echo "$TO_CHECK"
+echo -e "\033[1;34mWill typecheck the following ${#PY_FILES_ARRAY[@]} files...\033[0m"
+echo "${PY_FILES_ARRAY[@]}"
 echo -e "-----------------------------------------------------------------------"
 
 if [ "$1" == "--force" ]; then
