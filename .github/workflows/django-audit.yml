@@ -58,20 +58,19 @@ jobs:
           curl -fL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b "${TEMP_PATH}" "${REVIEWDOG_VERSION}" 2>&1
           echo '::endgroup::'
 
-          echo '::group::🐍 Installing pyright ...'
-          npm install pyright
-          echo '::endgroup::'
-
-          echo '::group::🔎 Running pyright with reviewdog 🐶 ...'
+          echo '::group::🐍🔎 Running pyright with reviewdog 🐶 ...'
           curl -fL https://raw.githubusercontent.com/jordemort/action-pyright/a72509b263749732e50c41d335964a100ec9c06a/pyright_to_rdjson/pyright_to_rdjson.py --output pyright_to_rdjson.py
-          "$(npm bin)/pyright" $(git ls-files '*.py' | grep -v migrations ) --outputjson |
+          pyright $(git ls-files '*.py' | grep -v migrations) --outputjson |
             python3 pyright_to_rdjson.py  |
             reviewdog -f=rdjson -name="pyright-report" \
               -reporter="github-check" \
-              -fail-on-error="true"
+              -fail-on-error="true" -level="warning"
           reviewdog_rc=$?
           echo '::endgroup::'
           exit $reviewdog_rc
+
+          # fail for realsies
+          pyright $(git ls-files '*.py' | grep -v migrations)
 
         # --- unit tests and coverage ---
       - name: Unit tests
