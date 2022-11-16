@@ -125,4 +125,4 @@ jobs:
       - uses: actionsx/prettier@v2
         with:
           # prettier CLI arguments.
-          args: --check $(git ls-files '*.css' '*.js' '*.md')
+          args: --check "**.css" "**.js" "**.md"
