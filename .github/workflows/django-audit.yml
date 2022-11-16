@@ -107,7 +107,7 @@ jobs:
           pyflakes .
       - name: Run YAPF
         run: |
-          yapf $(git ls-files '*.py' | grep -v migrations/ | grep -v /apps.py)
+          yapf -d $(git ls-files '*.py' | grep -v migrations/ | grep -v /apps.py)
       - name: Run djlint
         run: |
           djlint $(git ls-files '**/templates/**.html')
