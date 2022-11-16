@@ -114,3 +114,14 @@ jobs:
       - name: Run spell-check
         run: |
           codespell $(git ls-files)
+
+  prettier:
+    name: "Prettier"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Run djlint
+        run: |
+          djlint $(git ls-files '*.css' '*.js' '*.md')
