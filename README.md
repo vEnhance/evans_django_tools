@@ -23,22 +23,22 @@ provide some `request` information in the webhook embed.
 3. Import it using `from evans_django_tools import DiscordWebhookHandler`.
 4. Add standard `logging` commands. For example,
 
-	```python
-	import logging
-	from evans_django_tools import DiscordWebhookHandler
+   ```python
+   import logging
+   from evans_django_tools import DiscordWebhookHandler
 
-	logger = logging.getLogger('root')
-	logger.setLevel(logging.INFO)
-	logger.addHandler(DiscordWebhookHandler())
-	logger.addHandler(logging.StreamHandler())
-	```
+   logger = logging.getLogger('root')
+   logger.setLevel(logging.INFO)
+   logger.addHandler(DiscordWebhookHandler())
+   logger.addHandler(logging.StreamHandler())
+   ```
 
 5. You should set environment variable `WEBHOOK_URL` to the target webhook URL.
 6. If you want different channels for different error levels,
-	use `WEBHOOK_CRITICAL_URL`, `WEBHOOK_ERROR_URL`, etc.
-	Otherwise `WEBHOOK_URL` is used by default.
+   use `WEBHOOK_CRITICAL_URL`, `WEBHOOK_ERROR_URL`, etc.
+   Otherwise `WEBHOOK_URL` is used by default.
 7. The package adds three new log levels: `VERBOSE_LOG_LEVEL = 15`,
-	`SUCCESS_LOG_LEVEL = 25`, `ACTION_LOG_LEVEL = 35`.
+   `SUCCESS_LOG_LEVEL = 25`, `ACTION_LOG_LEVEL = 35`.
 
 ## Test suite
 
@@ -68,9 +68,9 @@ name: Django Audit
 
 on:
   push:
-    branches: [ '*' ]
+    branches: ["*"]
   pull_request:
-    branches: [ '*' ]
+    branches: ["*"]
 jobs:
   audit:
     uses: vEnhance/evans_django_tools/.github/workflows/django-audit.yml@main
