@@ -122,6 +122,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
-      - name: Run prettier
-        run: |
-          prettier $(git ls-files '*.css' '*.js' '*.md')
+      - uses: actionsx/prettier@v2
+        with:
+          # prettier CLI arguments.
+          args: --check $(git ls-files '*.css' '*.js' '*.md')
