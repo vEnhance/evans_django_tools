@@ -122,6 +122,6 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
-      - name: Run djlint
+      - name: Run prettier
         run: |
-          djlint $(git ls-files '*.css' '*.js' '*.md')
+          prettier $(git ls-files '*.css' '*.js' '*.md')
