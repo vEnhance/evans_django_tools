@@ -128,5 +128,5 @@ jobs:
           submodules: recursive
       - uses: creyD/prettier_action@v4.2
         with:
-          prettier_options: "--check **.css **.js **.md"
+          prettier_options: "--check **/*.css **/*.js **/*.md"
           dry: true
