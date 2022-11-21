@@ -40,17 +40,14 @@ class EvanTestCase(TestCase):
 
     def debug_short(self, response: MonkeyResponseType) -> str:
         d: Dict[str, Any] = {}
-        for key in ('headers', 'json', 'redirect_chain', 'request',
-                    'wsgi_request'):
+        for key in ('headers', 'json', 'redirect_chain', 'request', 'wsgi_request'):
             d[key] = getattr(response, key, None)
         return '\n' + pprint.pformat(d, compact=False, depth=3) + '\n'
 
     def debug_dump(self, response: MonkeyResponseType) -> None:
         timestamp = datetime.now().strftime('%d_%b_%Y_%H%M%S')
-        html_path = Path(
-            f"/tmp/{settings.WSGI_APPLICATION}.tests/{timestamp}.html")
-        txt_path = Path(
-            f"/tmp/{settings.WSGI_APPLICATION}.tests/{timestamp}.txt")
+        html_path = Path(f"/tmp/{settings.WSGI_APPLICATION}.tests/{timestamp}.html")
+        txt_path = Path(f"/tmp/{settings.WSGI_APPLICATION}.tests/{timestamp}.txt")
 
         try:
             html_path.parent.mkdir(exist_ok=True)
@@ -62,26 +59,21 @@ class EvanTestCase(TestCase):
                 html_path.write_bytes(response.content)
                 txt_path.write_text(pprint.pformat(response.__dict__, depth=3))
 
-    def assertHas(self, response: MonkeyResponseType,
-                  text: Union[bytes, int, str], **kwargs: Any):
+    def assertHas(self, response: MonkeyResponseType, text: Union[bytes, int, str],
+                    **kwargs: Any):
         try:
-            self.assertContains(response,
-                                text,
-                                **kwargs,
-                                msg_prefix=self.debug_short(response))
+            self.assertContains(response, text, **kwargs, msg_prefix=self.debug_short(response))
         except AssertionError as e:
             self.debug_dump(response)
             raise e
         else:
             return response
 
-    def assertNotHas(self, response: MonkeyResponseType,
-                     text: Union[bytes, str], **kwargs: Any):
+    def assertNotHas(self, response: MonkeyResponseType, text: Union[bytes, str],
+                        **kwargs: Any):
         try:
-            self.assertNotContains(response,
-                                   text,
-                                   **kwargs,
-                                   msg_prefix=self.debug_short(response))
+            self.assertNotContains(
+                response, text, **kwargs, msg_prefix=self.debug_short(response))
         except AssertionError as e:
             self.debug_dump(response)
             raise e
