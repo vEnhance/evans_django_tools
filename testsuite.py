@@ -82,10 +82,18 @@ class EvanTestCase(TestCase):
 
     def assertResponse20X(self, response: MonkeyResponseType):
         try:
-            self.assertGreaterEqual(response.status_code, 200,
-                                    self.debug_short(response))
-            self.assertLess(response.status_code, 300,
-                            self.debug_short(response))
+            self.assertGreaterEqual(response.status_code, 200, self.debug_short(response))
+            self.assertLess(response.status_code, 300, self.debug_short(response))
+        except AssertionError as e:
+            self.debug_dump(response)
+            raise e
+        else:
+            return response
+
+    def assertResponse30X(self, response: MonkeyResponseType):
+        try:
+            self.assertGreaterEqual(response.status_code, 300, self.debug_short(response))
+            self.assertLess(response.status_code, 400, self.debug_short(response))
         except AssertionError as e:
             self.debug_dump(response)
             raise e
@@ -94,8 +102,7 @@ class EvanTestCase(TestCase):
 
     def assertResponseOK(self, response: MonkeyResponseType):
         try:
-            self.assertLess(response.status_code, 400,
-                            self.debug_short(response))
+            self.assertLess(response.status_code, 400, self.debug_short(response))
         except AssertionError as e:
             self.debug_dump(response)
             raise e
@@ -104,10 +111,8 @@ class EvanTestCase(TestCase):
 
     def assertResponse40X(self, response: MonkeyResponseType):
         try:
-            self.assertGreaterEqual(response.status_code, 400,
-                                    self.debug_short(response))
-            self.assertLess(response.status_code, 500,
-                            self.debug_short(response))
+            self.assertGreaterEqual(response.status_code, 400, self.debug_short(response))
+            self.assertLess(response.status_code, 500, self.debug_short(response))
         except AssertionError as e:
             self.debug_dump(response)
             raise e
@@ -117,8 +122,7 @@ class EvanTestCase(TestCase):
     def assertResponseDenied(self, response: MonkeyResponseType):
         try:
             if response.status_code != 400:
-                self.assertEqual(response.status_code, 403,
-                                 self.debug_short(response))
+                self.assertEqual(response.status_code, 403, self.debug_short(response))
         except AssertionError as e:
             self.debug_dump(response)
             raise e
@@ -127,8 +131,7 @@ class EvanTestCase(TestCase):
 
     def assertResponseNotFound(self, response: MonkeyResponseType):
         try:
-            self.assertEqual(response.status_code, 404,
-                             self.debug_short(response))
+            self.assertEqual(response.status_code, 404, self.debug_short(response))
         except AssertionError as e:
             self.debug_dump(response)
             raise e
@@ -150,11 +153,14 @@ class EvanTestCase(TestCase):
     def url(self, name: str, *args: Any):
         return reverse_lazy(name, args=args)
 
+    def assertGetOK(self, name: str, *args: Any, **kwargs: Any):
+        return self.assertResponseOK(self.get(name, *args, **kwargs))
+
     def assertGet20X(self, name: str, *args: Any, **kwargs: Any):
         return self.assertResponse20X(self.get(name, *args, **kwargs))
 
-    def assertGetOK(self, name: str, *args: Any, **kwargs: Any):
-        return self.assertResponseOK(self.get(name, *args, **kwargs))
+    def assertGet30X(self, name: str, *args: Any, **kwargs: Any):
+        return self.assertResponse30X(self.get(name, *args, **kwargs))
 
     def assertGet40X(self, name: str, *args: Any, **kwargs: Any):
         return self.assertResponse40X(self.get(name, *args, **kwargs))
@@ -165,8 +171,7 @@ class EvanTestCase(TestCase):
     def assertGetNotFound(self, name: str, *args: Any, **kwargs: Any):
         return self.assertResponseNotFound(self.get(name, *args, **kwargs))
 
-    def assertGetRedirects(self, target: str, name: str, *args: Any,
-                           **kwargs: Any):
+    def assertGetRedirects(self, target: str, name: str, *args: Any, **kwargs: Any):
         resp = self.get(name, *args, **kwargs)
         self.assertRedirects(
             resp,
@@ -176,11 +181,14 @@ class EvanTestCase(TestCase):
         )
         return resp
 
+    def assertPostOK(self, name: str, *args: Any, **kwargs: Any):
+        return self.assertResponseOK(self.post(name, *args, **kwargs))
+
     def assertPost20X(self, name: str, *args: Any, **kwargs: Any):
         return self.assertResponse20X(self.post(name, *args, **kwargs))
 
-    def assertPostOK(self, name: str, *args: Any, **kwargs: Any):
-        return self.assertResponseOK(self.post(name, *args, **kwargs))
+    def assertPost(self, name: str, *args: Any, **kwargs: Any):
+        return self.assertResponse30X(self.post(name, *args, **kwargs))
 
     def assertPost40X(self, name: str, *args: Any, **kwargs: Any):
         return self.assertResponse40X(self.post(name, *args, **kwargs))
@@ -191,8 +199,7 @@ class EvanTestCase(TestCase):
     def assertPostNotFound(self, name: str, *args: Any, **kwargs: Any):
         return self.assertResponseNotFound(self.post(name, *args, **kwargs))
 
-    def assertPostRedirects(self, target: str, name: str, *args: Any,
-                            **kwargs: Any):
+    def assertPostRedirects(self, target: str, name: str, *args: Any, **kwargs: Any):
         resp = self.post(name, *args, **kwargs)
         self.assertRedirects(
             resp,
@@ -218,27 +225,25 @@ class EvanTestCase(TestCase):
             self.client.force_login(user)
             return user
 
-    def assertGetBecomesLoginRedirect(self, name: str, *args: Any):
+    def assertGetBecomesLoginRedirect(self, name: str, *args: Any, **kwargs: Any):
         redirectURL = '/accounts/login/?next=' + reverse_lazy(name, args=args)
-        resp = self.get(name, *args)
+        resp = self.get(name, *args, **kwargs)
         self.assertRedirects(resp, redirectURL)
         return resp
 
-    def assertPostBecomesLoginRedirect(self, name: str, *args: Any,
-                                       **kwargs: Any):
+    def assertPostBecomesLoginRedirect(self, name: str, *args: Any, **kwargs: Any):
         redirectURL = '/accounts/login/?next=' + reverse_lazy(name, args=args)
         resp = self.post(name, *args, **kwargs)
         self.assertRedirects(resp, redirectURL)
         return resp
 
-    def assertGetBecomesStaffRedirect(self, name: str, *args: Any):
+    def assertGetBecomesStaffRedirect(self, name: str, *args: Any, **kwargs: Any):
         redirectURL = '/admin/login/?next=' + reverse_lazy(name, args=args)
-        resp = self.get(name, *args)
+        resp = self.get(name, *args, **kwargs)
         self.assertRedirects(resp, redirectURL)
         return resp
 
-    def assertPostBecomesStaffRedirect(self, name: str, *args: Any,
-                                       **kwargs: Any):
+    def assertPostBecomesStaffRedirect(self, name: str, *args: Any, **kwargs: Any):
         redirectURL = '/admin/login/?next=' + reverse_lazy(name, args=args)
         resp = self.post(name, *args, **kwargs)
         self.assertRedirects(resp, redirectURL)
