@@ -97,7 +97,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.10
+          python-version: "3.10"
       - uses: actions/cache@v3
         with:
           path: ~/.cache/pip
@@ -128,5 +128,5 @@ jobs:
           submodules: recursive
       - uses: creyD/prettier_action@v4.2
         with:
-          prettier_options: --check "**.css" "**.js" "**.md"
+          prettier_options: "--check **.css **.js **.md"
           dry: true
