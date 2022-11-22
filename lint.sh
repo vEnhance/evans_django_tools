@@ -120,6 +120,15 @@ if ! djlint --check "${HTML_FILES_ARRAY[@]}"; then
 fi
 echo -e ""
 
+echo -e "\033[1;35mRunning python manage.py validate_templates ...\033[0m"
+echo -e "---------------------------"
+if ! python manage.py validate_templates; then
+  echo -e "$FAILED_HEADER Template errors were found"
+  echo "$COMMIT_ID" >"$BAD_FILE"
+  exit 1
+fi
+echo -e ""
+
 echo -e "\033[1;35mRunning prettier ...\033[0m"
 echo -e "---------------------------"
 if ! prettier --check "${PRETTIER_FILES_ARRAY[@]}"; then

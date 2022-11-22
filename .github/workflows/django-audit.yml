@@ -74,6 +74,12 @@ jobs:
           # fail for realsies
           pyright $(git ls-files '*.py' | grep -v migrations)
 
+        # --- validate templates ---
+      - name: Template validation
+        run: |
+          source .venv/bin/activate
+          python manage.py validate_templates
+
         # --- unit tests and coverage ---
       - name: Unit tests
         run: |
