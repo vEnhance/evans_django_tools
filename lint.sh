@@ -113,7 +113,7 @@ echo -e ""
 
 echo -e "\033[1;35mRunning djlint ...\033[0m"
 echo -e "---------------------------"
-if ! djlint --check "${HTML_FILES_ARRAY[@]}"; then
+if ! djlint "${HTML_FILES_ARRAY[@]}"; then
   echo -e "$FAILED_HEADER djlint failed"
   echo "$COMMIT_ID" >"$BAD_FILE"
   exit 1
