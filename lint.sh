@@ -100,11 +100,11 @@ fi
 python manage.py migrate
 echo -e ""
 
-echo -e "\033[1;35mLinting files with yapf ...\033[0m"
+echo -e "\033[1;35mLinting files with black ...\033[0m"
 echo -e "---------------------------"
-if ! yapf -d "${PY_FILES_ARRAY[@]}"; then
+if ! black --check "${PY_FILES_ARRAY[@]}"; then
   echo -e "$FAILED_HEADER Some files that needed in-place edits, editing now..."
-  yapf --in-place "${PY_FILES_ARRAY[@]}"
+  black "${PY_FILES_ARRAY[@]}"
   echo -e "Better check your work!"
   echo "$COMMIT_ID" >"$BAD_FILE"
   exit 1
