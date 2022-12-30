@@ -138,15 +138,6 @@ if ! prettier --check "${PRETTIER_FILES_ARRAY[@]}"; then
 fi
 echo -e ""
 
-echo -e "\033[1;35mRunning mypy ...\033[0m"
-echo -e "---------------------------"
-if ! mypy --ignore-missing-imports "${PY_FILES_ARRAY[@]}"; then
-  echo -e "$FAILED_HEADER mypy failed"
-  echo "$COMMIT_ID" >"$BAD_FILE"
-  exit 1
-fi
-echo -e ""
-
 echo -e "\033[1;35mRunning pyright ...\033[0m"
 echo -e "---------------------------"
 if ! pyright; then
