@@ -3,22 +3,23 @@ import logging
 import pprint
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Union
+from typing import TYPE_CHECKING, Any, Dict, Type, Union
 
 import factory
 import factory.random
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 from django.test.client import Client
-from django.urls.base import reverse_lazy
+from django.urls.base import resolve, reverse
 
-factory.random.reseed_random('otisweb')
+factory.random.reseed_random("otisweb")
 
 # OKAY TIME TO MONKEY PATCH THE MONKEY PATCH
 if TYPE_CHECKING:  # pragma: no cover
     from django.test.client import _MonkeyPatchedWSGIResponse  # type: ignore  # NOQA
+
     MonkeyResponseType = _MonkeyPatchedWSGIResponse
 else:
     MonkeyResponseType = Any
@@ -28,24 +29,23 @@ else:
 class UniqueFaker(factory.Faker):
     # based on factory.faker.Faker.generate
     def generate(self, **params: Any) -> Any:
-        locale = params.pop('locale')
+        locale = params.pop("locale")
         subfaker = self._get_faker(locale)
         return subfaker.unique.format(self.provider, **params)
 
 
 class EvanTestCase(TestCase):
-
     def setUp(self):
         self.client = Client()
 
     def debug_short(self, response: MonkeyResponseType) -> str:
         d: Dict[str, Any] = {}
-        for key in ('headers', 'json', 'redirect_chain', 'request', 'wsgi_request'):
+        for key in ("headers", "json", "redirect_chain", "request", "wsgi_request"):
             d[key] = getattr(response, key, None)
-        return '\n' + pprint.pformat(d, compact=False, depth=3) + '\n'
+        return "\n" + pprint.pformat(d, compact=False, depth=3) + "\n"
 
     def debug_dump(self, response: MonkeyResponseType) -> None:
-        timestamp = datetime.now().strftime('%d_%b_%Y_%H%M%S')
+        timestamp = datetime.now().strftime("%d_%b_%Y_%H%M%S")
         html_path = Path(f"/tmp/{settings.WSGI_APPLICATION}.tests/{timestamp}.html")
         txt_path = Path(f"/tmp/{settings.WSGI_APPLICATION}.tests/{timestamp}.txt")
 
@@ -59,21 +59,26 @@ class EvanTestCase(TestCase):
                 html_path.write_bytes(response.content)
                 txt_path.write_text(pprint.pformat(response.__dict__, depth=3))
 
-    def assertHas(self, response: MonkeyResponseType, text: Union[bytes, int, str],
-                    **kwargs: Any):
+    def assertHas(
+        self, response: MonkeyResponseType, text: Union[bytes, int, str], **kwargs: Any
+    ):
         try:
-            self.assertContains(response, text, **kwargs, msg_prefix=self.debug_short(response))
+            self.assertContains(
+                response, text, **kwargs, msg_prefix=self.debug_short(response)
+            )
         except AssertionError as e:
             self.debug_dump(response)
             raise e
         else:
             return response
 
-    def assertNotHas(self, response: MonkeyResponseType, text: Union[bytes, str],
-                        **kwargs: Any):
+    def assertNotHas(
+        self, response: MonkeyResponseType, text: Union[bytes, str], **kwargs: Any
+    ):
         try:
             self.assertNotContains(
-                response, text, **kwargs, msg_prefix=self.debug_short(response))
+                response, text, **kwargs, msg_prefix=self.debug_short(response)
+            )
         except AssertionError as e:
             self.debug_dump(response)
             raise e
@@ -82,7 +87,9 @@ class EvanTestCase(TestCase):
 
     def assertResponse20X(self, response: MonkeyResponseType):
         try:
-            self.assertGreaterEqual(response.status_code, 200, self.debug_short(response))
+            self.assertGreaterEqual(
+                response.status_code, 200, self.debug_short(response)
+            )
             self.assertLess(response.status_code, 300, self.debug_short(response))
         except AssertionError as e:
             self.debug_dump(response)
@@ -92,7 +99,9 @@ class EvanTestCase(TestCase):
 
     def assertResponse30X(self, response: MonkeyResponseType):
         try:
-            self.assertGreaterEqual(response.status_code, 300, self.debug_short(response))
+            self.assertGreaterEqual(
+                response.status_code, 300, self.debug_short(response)
+            )
             self.assertLess(response.status_code, 400, self.debug_short(response))
         except AssertionError as e:
             self.debug_dump(response)
@@ -111,7 +120,9 @@ class EvanTestCase(TestCase):
 
     def assertResponse40X(self, response: MonkeyResponseType):
         try:
-            self.assertGreaterEqual(response.status_code, 400, self.debug_short(response))
+            self.assertGreaterEqual(
+                response.status_code, 400, self.debug_short(response)
+            )
             self.assertLess(response.status_code, 500, self.debug_short(response))
         except AssertionError as e:
             self.debug_dump(response)
@@ -138,20 +149,30 @@ class EvanTestCase(TestCase):
         else:
             return response
 
+    def setupViewGet(
+        self, viewClass: Type[object], name: str, *args: Any, **kwargs: Any
+    ):
+        url = reverse(name, args=args)
+        request = RequestFactory().get(url, **kwargs)
+        resolver_match = resolve(url)
+        view = viewClass()
+        view.setup(request, *resolver_match.args, **resolver_match.kwargs)  # type: ignore
+        return view
+
     def get(self, name: str, *args: Any, **kwargs: Any):
-        if (json_data := kwargs.pop('json', None)) is not None:
-            kwargs['content_type'] = 'application/json'
-            kwargs['data'] = json.dumps(json_data)
-        return self.client.get(reverse_lazy(name, args=args), **kwargs)
+        if (json_data := kwargs.pop("json", None)) is not None:
+            kwargs["content_type"] = "application/json"
+            kwargs["data"] = json.dumps(json_data)
+        return self.client.get(reverse(name, args=args), **kwargs)
 
     def post(self, name: str, *args: Any, **kwargs: Any):
-        if (json_data := kwargs.pop('json', None)) is not None:
-            kwargs['content_type'] = 'application/json'
-            kwargs['data'] = json.dumps(json_data)
-        return self.client.post(reverse_lazy(name, args=args), **kwargs)
+        if (json_data := kwargs.pop("json", None)) is not None:
+            kwargs["content_type"] = "application/json"
+            kwargs["data"] = json.dumps(json_data)
+        return self.client.post(reverse(name, args=args), **kwargs)
 
     def url(self, name: str, *args: Any):
-        return reverse_lazy(name, args=args)
+        return reverse(name, args=args)
 
     def assertGetOK(self, name: str, *args: Any, **kwargs: Any):
         return self.assertResponseOK(self.get(name, *args, **kwargs))
@@ -220,31 +241,31 @@ class EvanTestCase(TestCase):
         elif isinstance(obj, User):
             self.client.force_login(obj)
             return obj
-        elif hasattr(obj, 'user'):
-            user = getattr(obj, 'user')
+        elif hasattr(obj, "user"):
+            user = getattr(obj, "user")
             self.client.force_login(user)
             return user
 
     def assertGetBecomesLoginRedirect(self, name: str, *args: Any, **kwargs: Any):
-        redirectURL = '/accounts/login/?next=' + reverse_lazy(name, args=args)
+        redirectURL = "/accounts/login/?next=" + reverse(name, args=args)
         resp = self.get(name, *args, **kwargs)
         self.assertRedirects(resp, redirectURL)
         return resp
 
     def assertPostBecomesLoginRedirect(self, name: str, *args: Any, **kwargs: Any):
-        redirectURL = '/accounts/login/?next=' + reverse_lazy(name, args=args)
+        redirectURL = "/accounts/login/?next=" + reverse(name, args=args)
         resp = self.post(name, *args, **kwargs)
         self.assertRedirects(resp, redirectURL)
         return resp
 
     def assertGetBecomesStaffRedirect(self, name: str, *args: Any, **kwargs: Any):
-        redirectURL = '/admin/login/?next=' + reverse_lazy(name, args=args)
+        redirectURL = "/admin/login/?next=" + reverse(name, args=args)
         resp = self.get(name, *args, **kwargs)
         self.assertRedirects(resp, redirectURL)
         return resp
 
     def assertPostBecomesStaffRedirect(self, name: str, *args: Any, **kwargs: Any):
-        redirectURL = '/admin/login/?next=' + reverse_lazy(name, args=args)
+        redirectURL = "/admin/login/?next=" + reverse(name, args=args)
         resp = self.post(name, *args, **kwargs)
         self.assertRedirects(resp, redirectURL)
         return resp
