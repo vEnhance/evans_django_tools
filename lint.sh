@@ -81,6 +81,15 @@ if ! python manage.py check; then
 fi
 echo -e ""
 
+echo -e "\033[1;35mRunning isort ...\033[0m"
+echo -e "---------------------------"
+if ! isort -c -q --profile black "${PY_FILES_ARRAY[@]}"; then
+  echo -e "$FAILED_HEADER pyflakes gave nonzero status"
+  echo "$COMMIT_ID" >"$BAD_FILE"
+  exit 1
+fi
+echo -e ""
+
 echo -e "\033[1;35mRunning pyflakes ...\033[0m"
 echo -e "---------------------------"
 if ! pyflakes .; then
