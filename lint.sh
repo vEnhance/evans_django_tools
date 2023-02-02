@@ -9,7 +9,7 @@ BAD_FILE="/tmp/${PWD##*/}.bad"
 GOOD_FILE="/tmp/${PWD##*/}.good"
 
 COMMIT_ID=$(git rev-parse HEAD)
-readarray -t PY_FILES_ARRAY < <(git ls-files '*.py' | grep -v migrations/ | grep -v /apps.py)
+readarray -t PY_FILES_ARRAY < <(git ls-files '*.py')
 readarray -t HTML_FILES_ARRAY < <(git ls-files '*.html')
 readarray -t PRETTIER_FILES_ARRAY < <(git ls-files '*.css' '*.js' '*.md')
 readarray -t SPELL_FILES_ARRAY < <(git ls-files)

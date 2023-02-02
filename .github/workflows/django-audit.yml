@@ -104,13 +104,13 @@ jobs:
           python -m pip install --upgrade djlint pyflakes toml isort black git+https://github.com/codespell-project/codespell.git@fd1d5c0d8dd5d8072d0422ce4f05b6202aa89ba0 tomli
       - name: Run isort
         run: |
-          isort -c -q --profile black $(git ls-files '*.py' | grep -v migrations/ | grep -v /apps.py)
+          isort -c -q --profile black $(git ls-files '*.py')
       - name: Run Pyflakes
         run: |
           pyflakes .
       - name: Run black
         run: |
-          black --check $(git ls-files '*.py' | grep -v migrations/ | grep -v /apps.py)
+          black --check $(git ls-files '*.py')
       - name: Run djlint
         run: |
           djlint $(git ls-files '**/templates/**.html')
