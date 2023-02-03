@@ -3,7 +3,7 @@ import logging
 import pprint
 from datetime import datetime
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Type, Union
+from typing import TYPE_CHECKING, Any, Type, Union
 
 import factory
 import factory.random
@@ -39,7 +39,7 @@ class EvanTestCase(TestCase):
         self.client = Client()
 
     def debug_short(self, response: MonkeyResponseType) -> str:
-        d: Dict[str, Any] = {}
+        d: dict[str, Any] = {}
         for key in ("headers", "json", "redirect_chain", "request", "wsgi_request"):
             d[key] = getattr(response, key, None)
         return "\n" + pprint.pformat(d, compact=False, depth=3) + "\n"
