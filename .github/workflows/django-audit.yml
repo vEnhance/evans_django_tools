@@ -113,7 +113,7 @@ jobs:
           black --check $(git ls-files '*.py')
       - name: Run djlint
         run: |
-          djlint $(git ls-files '**/templates/**.html')
+          djlint --check $(git ls-files '**/templates/**.html')
       - name: Run spell-check
         run: |
           codespell $(git ls-files)
