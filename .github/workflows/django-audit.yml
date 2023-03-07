@@ -62,7 +62,8 @@ jobs:
           echo '::endgroup::'
           exit $reviewdog_rc
 
-          # fail for realsies
+      - name: pyright (for real)
+        run: |
           pyright $(git ls-files '*.py' | grep -v migrations)
 
         # --- validate templates ---
