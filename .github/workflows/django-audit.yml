@@ -64,6 +64,7 @@ jobs:
 
       - name: pyright (for real)
         run: |
+          source .venv/bin/activate
           pyright $(git ls-files '*.py' | grep -v migrations)
 
         # --- validate templates ---
