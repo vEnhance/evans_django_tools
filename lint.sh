@@ -91,7 +91,7 @@ echo -e ""
 
 echo -e "\033[1;35mRunning pyflakes ...\033[0m"
 echo -e "---------------------------"
-if ! pyflakes .; then
+if ! pyflakes "${PY_FILES_ARRAY[@]}"; then
   echo -e "$FAILED_HEADER pyflakes gave nonzero status"
   echo "$COMMIT_ID" >"$BAD_FILE"
   exit 1
