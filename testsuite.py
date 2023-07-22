@@ -85,6 +85,14 @@ class EvanTestCase(TestCase):
         else:
             return response
 
+    def assertMessage(
+        self, response: MonkeyResponseType, text: Union[bytes, int, str], **kwargs: Any
+    ):
+        self.assertIn(text, [m.message for m in response.context["messages"] or []])
+
+    def assertNoMessages(self, response: MonkeyResponseType):
+        self.assertEqual(len(response.context["messages"]), 0)
+
     def assertResponse20X(self, response: MonkeyResponseType):
         try:
             self.assertGreaterEqual(
