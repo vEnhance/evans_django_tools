@@ -126,7 +126,7 @@ echo -e "\033[1;35mRunning djlint ...\033[0m"
 echo -e "---------------------------"
 if ! djlint --check "${HTML_FILES_ARRAY[@]}"; then
   echo -e "$FAILED_HEADER djlint failed, editing files now"
-  djlint --reformat "${HTML_FILES_ARRAY[@]}"
+  djlint --reformat --quiet "${HTML_FILES_ARRAY[@]}"
   echo -e "Please recommit and try again"
   echo "$COMMIT_ID" >"$BAD_FILE"
   exit 1
