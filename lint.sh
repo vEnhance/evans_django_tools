@@ -82,8 +82,11 @@ echo -e ""
 
 echo -e "\033[1;35mRunning isort ...\033[0m"
 echo -e "---------------------------"
-if ! isort -c -q --profile black "${PY_FILES_ARRAY[@]}"; then
-  echo -e "$FAILED_HEADER pyflakes gave nonzero status"
+if ! isort --check --quiet --profile black "${PY_FILES_ARRAY[@]}"; then
+  echo -e "$FAILED_HEADER isort gave nonzero status, fixing now..."
+  isort --quiet --profile black "${PY_FILES_ARRAY[@]}"
+  echo -e "Please recommit and try again!"
+  echo
   echo "$COMMIT_ID" >"$BAD_FILE"
   exit 1
 fi
@@ -113,7 +116,7 @@ echo -e "---------------------------"
 if ! black --check "${PY_FILES_ARRAY[@]}"; then
   echo -e "$FAILED_HEADER Some files that needed in-place edits, editing now..."
   black "${PY_FILES_ARRAY[@]}"
-  echo -e "Better check your work!"
+  echo -e "Please recommit and try again"
   echo "$COMMIT_ID" >"$BAD_FILE"
   exit 1
 fi
@@ -122,7 +125,9 @@ echo -e ""
 echo -e "\033[1;35mRunning djlint ...\033[0m"
 echo -e "---------------------------"
 if ! djlint --check "${HTML_FILES_ARRAY[@]}"; then
-  echo -e "$FAILED_HEADER djlint failed"
+  echo -e "$FAILED_HEADER djlint failed, editing files now"
+  djlint --reformat "${HTML_FILES_ARRAY[@]}"
+  echo -e "Please recommit and try again"
   echo "$COMMIT_ID" >"$BAD_FILE"
   exit 1
 fi
@@ -140,7 +145,9 @@ echo -e ""
 echo -e "\033[1;35mRunning prettier ...\033[0m"
 echo -e "---------------------------"
 if ! prettier --check "${PRETTIER_FILES_ARRAY[@]}"; then
-  echo -e "$FAILED_HEADER prettier failed"
+  echo -e "$FAILED_HEADER prettier failed, re-running now"
+  prettier --write "${PRETTIER_FILES_ARRAY[@]}"
+  echo -e "Please recommit and try again"
   echo "$COMMIT_ID" >"$BAD_FILE"
   exit 1
 fi
