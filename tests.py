@@ -20,9 +20,9 @@ class TestLogger(unittest.TestCase):
             )
             payload = handler.get_payload(record)
             self.assertLessEqual(len(payload["embeds"][0]["description"]), 2000)
-            resp = handler.get_response(record)
+            resp = handler.post_response(record)
         if os.getenv("WEBHOOK_URL") is not None:
-            resp = handler.get_response(record)
+            resp = handler.post_response(record)
             assert resp is not None
             self.assertLessEqual(resp.status_code, 299)
 
@@ -43,6 +43,6 @@ class TestLogger(unittest.TestCase):
             payload = handler.get_payload(record)
             self.assertLessEqual(len(payload["embeds"][0]["description"]), 2000)
             if os.getenv("WEBHOOK_URL") is not None:
-                resp = handler.get_response(record)
+                resp = handler.post_response(record)
                 assert resp is not None
                 self.assertLessEqual(resp.status_code, 299)
