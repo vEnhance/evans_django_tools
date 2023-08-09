@@ -173,7 +173,7 @@ class DiscordWebhookHandler(logging.Handler):
             f"WEBHOOK_URL_{record.levelname.upper()}", os.getenv("WEBHOOK_URL")
         )
 
-    def get_response(self, record: logging.LogRecord) -> Optional[requests.Response]:
+    def post_response(self, record: logging.LogRecord) -> Optional[requests.Response]:
         data = self.get_payload(record)
         url = self.get_url(record)
         if url is not None:
@@ -182,4 +182,4 @@ class DiscordWebhookHandler(logging.Handler):
             return None
 
     def emit(self, record: logging.LogRecord):
-        print(self.get_response(record))
+        self.post_response(record)
