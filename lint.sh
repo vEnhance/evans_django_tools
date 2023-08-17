@@ -11,7 +11,8 @@ GOOD_FILE="/tmp/${PWD##*/}.good"
 COMMIT_ID=$(git rev-parse HEAD)
 readarray -t PY_FILES_ARRAY < <(git ls-files '*.py')
 readarray -t HTML_FILES_ARRAY < <(git ls-files '**/templates/**.html')
-readarray -t PRETTIER_FILES_ARRAY < <(git ls-files '*.css' '*.js' '*.md')
+readarray -t PRETTIER_FILES_ARRAY < <(git ls-files '*.css' '*.js' '*.md' '*.ts')
+readarray -t PRETTIER_FILES_ARRAY < <(find "${PRETTIER_FILES_ARRAY[@]}" -not -type l)
 readarray -t SPELL_FILES_ARRAY < <(git ls-files)
 
 if [ -f "$GOOD_FILE" ]; then
