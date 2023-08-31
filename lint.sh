@@ -83,9 +83,9 @@ echo -e ""
 
 echo -e "\033[1;35mRunning isort ...\033[0m"
 echo -e "---------------------------"
-if ! isort --check --quiet --profile black "${PY_FILES_ARRAY[@]}"; then
+if ! isort --check --color --quiet --profile black "${PY_FILES_ARRAY[@]}"; then
   echo -e "$FAILED_HEADER isort gave nonzero status, fixing now..."
-  isort --quiet --profile black "${PY_FILES_ARRAY[@]}"
+  isort --color --profile black "${PY_FILES_ARRAY[@]}"
   echo -e "Please recommit and try again!"
   echo
   echo "$COMMIT_ID" >"$BAD_FILE"
