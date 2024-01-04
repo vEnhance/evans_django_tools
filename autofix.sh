@@ -7,11 +7,9 @@ readarray -t HTML_FILES_ARRAY < <(git ls-files '**/templates/**.html')
 readarray -t PRETTIER_FILES_ARRAY < <(git ls-files '*.css' '*.js' '*.md' '*.ts')
 readarray -t PRETTIER_FILES_ARRAY < <(find "${PRETTIER_FILES_ARRAY[@]}" -not -type l)
 
-echo -e "\033[1;35mRunning isort ...\033[0m"
-isort --verbose --only-modified --color --profile black "${PY_FILES_ARRAY[@]}"
-
-echo -e "\033[1;35mRunning black ...\033[0m"
-black "${PY_FILES_ARRAY[@]}"
+echo -e "\033[1;35mRunning ruff ...\033[0m"
+ruff check --fix "${PY_FILES_ARRAY[@]}"
+ruff format "${PY_FILES_ARRAY[@]}"
 
 echo -e "\033[1;35mRunning djlint ...\033[0m"
 djlint --reformat --quiet "${HTML_FILES_ARRAY[@]}"

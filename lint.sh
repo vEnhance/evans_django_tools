@@ -81,27 +81,6 @@ if ! python manage.py check; then
 fi
 echo -e ""
 
-echo -e "\033[1;35mRunning isort ...\033[0m"
-echo -e "---------------------------"
-if ! isort --check --color --quiet --profile black "${PY_FILES_ARRAY[@]}"; then
-  echo -e "$FAILED_HEADER isort gave nonzero status, fixing now..."
-  isort --color --profile black "${PY_FILES_ARRAY[@]}"
-  echo -e "Please recommit and try again!"
-  echo
-  echo "$COMMIT_ID" >"$BAD_FILE"
-  exit 1
-fi
-echo -e ""
-
-echo -e "\033[1;35mRunning pyflakes ...\033[0m"
-echo -e "---------------------------"
-if ! pyflakes "${PY_FILES_ARRAY[@]}"; then
-  echo -e "$FAILED_HEADER pyflakes gave nonzero status"
-  echo "$COMMIT_ID" >"$BAD_FILE"
-  exit 1
-fi
-echo -e ""
-
 echo -e "\033[1;35mMaking migrations ...\033[0m"
 echo -e "---------------------------"
 if ! python manage.py makemigrations | grep "No changes detected"; then
@@ -112,15 +91,22 @@ fi
 python manage.py migrate
 echo -e ""
 
-echo -e "\033[1;35mLinting files with black ...\033[0m"
+echo -e "\033[1;35mRunning ruff...\033[0m"
 echo -e "---------------------------"
-if ! black --check "${PY_FILES_ARRAY[@]}"; then
-  echo -e "$FAILED_HEADER Some files that needed in-place edits, editing now..."
-  black "${PY_FILES_ARRAY[@]}"
+if ! ruff check --fix --exit-non-zero-on-fix "${PY_FILES_ARRAY[@]}"; then
+  echo -e "$FAILED_HEADER Some files that needed in-place edits from ruff check, editing now..."
   echo -e "Please recommit and try again"
   echo "$COMMIT_ID" >"$BAD_FILE"
   exit 1
 fi
+if ! ruff format --diff "${PY_FILES_ARRAY[@]}"; then
+  echo -e "$FAILED_HEADER Some files that needed in-place ruff format, editing now..."
+  ruff format "${PY_FILES_ARRAY[@]}"
+  echo -e "Please recommit and try again"
+  echo "$COMMIT_ID" >"$BAD_FILE"
+  exit 1
+fi
+
 echo -e ""
 
 echo -e "\033[1;35mRunning djlint ...\033[0m"
