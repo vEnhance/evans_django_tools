@@ -106,7 +106,7 @@ jobs:
           python -m pip install --upgrade djlint toml ruff codespell
       - name: Run ruff
         run: |
-          ruff check $(git ls-files '*.py')
+          ruff check --output-format=github $(git ls-files '*.py')
           ruff format --diff $(git ls-files '*.py')
       - name: Run djlint
         run: |
