@@ -8,75 +8,29 @@ jobs:
     name: "Tests + type-check"
     runs-on: ubuntu-latest
     steps:
+      # --- initial setup ---
       - uses: actions/checkout@v3
         with:
           submodules: recursive
-      - name: Set up Python 3.10
-        uses: actions/setup-python@v4
+      - run: pipx install poetry
+      - uses: actions/setup-python@v4
         with:
+          cache: "poetry"
           python-version: "3.10"
+      - run: poetry install --no-interaction
+      - run: echo "$(poetry env info --path)/bin" >> $GITHUB_PATH
 
-        # --- dependency installation ---
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-      - name: Load cached venv if cache exists
-        id: cached-poetry-dependencies
-        uses: actions/cache@v3
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
-      - name: Install dependencies if cache miss
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: |
-          pip install -U pip setuptools coverage django-extensions pyright
-          poetry install --no-interaction --no-root
-      - name: Install root project
-        run: poetry install --no-interaction
-
-        # --- type checking ---
-      - name: pyright (via ReviewDog)
-        env:
-          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          source .venv/bin/activate
-          BASE_PATH="$(cd "$(dirname "$0")" && pwd)"
-          cd "${GITHUB_WORKSPACE}/${INPUT_WORKDIR}" || exit 1
-          TEMP_PATH="$(mktemp -d)"
-          PATH="${TEMP_PATH}:$PATH"
-
-          echo '::group::🐶 Installing reviewdog ... https://github.com/reviewdog/reviewdog'
-          curl -fL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b "${TEMP_PATH}" "${REVIEWDOG_VERSION}" 2>&1
-          echo '::endgroup::'
-
-          echo '::group::🐍🔎 Running pyright with reviewdog 🐶 ...'
-          curl -fL https://raw.githubusercontent.com/jordemort/action-pyright/a72509b263749732e50c41d335964a100ec9c06a/pyright_to_rdjson/pyright_to_rdjson.py --output pyright_to_rdjson.py
-          pyright $(git ls-files '*.py' | grep -v migrations) --outputjson |
-            python3 pyright_to_rdjson.py  |
-            reviewdog -f=rdjson -name="pyright-report" \
-              -reporter="github-check" \
-              -fail-on-error="true" -level="warning"
-          reviewdog_rc=$?
-          echo '::endgroup::'
-          exit $reviewdog_rc
-
-      - name: pyright (for real)
-        run: |
-          source .venv/bin/activate
-          pyright $(git ls-files '*.py' | grep -v migrations)
+        # --- type check ---
+      - uses: jakebailey/pyright-action@v2
 
         # --- validate templates ---
       - name: Template validation
         run: |
-          source .venv/bin/activate
           python manage.py validate_templates
 
         # --- unit tests and coverage ---
       - name: Unit tests
         run: |
-          source .venv/bin/activate
           python manage.py migrate
           coverage run manage.py test --shuffle 1337
           coverage lcov -o coverage/lcov.info
