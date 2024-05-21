@@ -20,7 +20,7 @@ factory.random.reseed_random("otisweb")
 if TYPE_CHECKING:  # pragma: no cover
     from django.test.client import _MonkeyPatchedWSGIResponse  # type: ignore  # NOQA
 
-    MonkeyResponseType = _MonkeyPatchedWSGIResponse
+    MonkeyResponseType = _MonkeyPatchedWSGIResponse  # type: ignore
 else:
     MonkeyResponseType = Any
 
