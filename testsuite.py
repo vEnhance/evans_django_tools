@@ -13,6 +13,7 @@ from django.db import models
 from django.test import RequestFactory, TestCase
 from django.test.client import Client
 from django.urls.base import resolve, reverse
+from factory.faker import Faker
 
 factory.random.reseed_random("otisweb")
 
@@ -26,7 +27,7 @@ else:
 
 
 # waiting on https://github.com/FactoryBoy/factory_boy/pull/820 ...
-class UniqueFaker(factory.Faker):
+class UniqueFaker(Faker):
     # based on factory.faker.Faker.generate
     def generate(self, **params: Any) -> Any:
         locale = params.pop("locale")
