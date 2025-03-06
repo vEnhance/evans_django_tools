@@ -54,9 +54,9 @@ else
   echo -e ""
 fi
 
-echo -e "\033[1;35mRunning poetry install --sync ...\033[0m"
+echo -e "\033[1;35mRunning poetry sync ...\033[0m"
 echo -e "---------------------------"
-if ! poetry install --sync; then
+if ! poetry sync; then
   echo -e "$FAILED_HEADER Dependency update failed"
   echo "$COMMIT_ID" >"$BAD_FILE"
   exit 1
