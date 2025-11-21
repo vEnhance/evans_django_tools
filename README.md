@@ -1,5 +1,14 @@
 # evans_django_tools
 
+This repository is now archived because its functionality has been split off.
+
+- [Testing shortcuts were moved into a separate file](https://github.com/vEnhance/otis-web/blob/main/otisweb_testsuite/testcase.py).
+- [Discord webhooks were split off](https://github.com/vEnhance/django-discordo)
+- CI is now usually done via [Makefile](https://github.com/vEnhance/otis-web/blob/main/Makefile)
+  for a simpler [ci.yml](https://github.com/vEnhance/otis-web/blob/main/.github/workflows/ci.yml).
+
+## Old description
+
 This is a submodule containing a bunch of stuff that I use between multiple
 Django projects.
 Things here were originally written for use with
